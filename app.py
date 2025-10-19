@@ -7,6 +7,15 @@ from datetime import datetime, timedelta
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import nltk
 import logging
+import nltk
+import logging
+
+# Load API keys securely from Streamlit Secrets
+YOUTUBE_API_KEY = st.secrets["YOUTUBE_API_KEY"]
+REDDIT_CLIENT_ID = st.secrets["REDDIT_CLIENT_ID"]
+REDDIT_CLIENT_SECRET = st.secrets["REDDIT_CLIENT_SECRET"]
+REDDIT_USER_AGENT = st.secrets.get("REDDIT_USER_AGENT", "GameLensBot/1.0")
+FINNHUB_API_KEY = st.secrets["FINNHUB_API_KEY"]
 
 # Optional imports (wrapped so app doesn't crash if user hasn't installed them)
 try:
@@ -550,8 +559,9 @@ if st.button("Collect buzz & predict"):
     else:
         with st.spinner("Collecting data from APIs... this can take a few seconds"):
             ticker = detect_ticker(game_name)
-            yt_videos = youtube_videos_and_stats('AIzaSyBgScLH0dr_6mCMAFbQmx241ASq8cPxyHM', game_name, days_back)
-            reddit_posts = fetch_reddit(game_name, days_back, '2G4oG9HXTgQAAdd7jPZm6w', 'JTrGBRudnOf6iw27StNq764itkr5-A', 'Duckie')
+            yt_videos = youtube_videos_and_stats(YOUTUBE_API_KEY, game_name, days_back)
+reddit_posts = fetch_reddit(game_name, days_back, REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, REDDIT_USER_AGENT)
+
             news_df = news_sentiments(game_name, days_back)
             trends_df = get_google_trends(game_name, days_back)
             feature_df = aggregate_features(game_name, days_back, yt_videos, reddit_posts, news_df, trends_df)
@@ -583,8 +593,8 @@ if st.button("Collect buzz & predict"):
                     st.markdown(f'<div style="text-align:center;color:var(--muted);margin-bottom:8px">Class probabilities: {prob_map}</div>', unsafe_allow_html=True)
                     st.markdown(f'<div style="text-align:center;color:var(--muted);margin-bottom:8px">Detected/used ticker: {detect_ticker(game_name) or "None / user override?"}</div>', unsafe_allow_html=True)
                     # optional: if finnhub key provided, show recent company sentiment (best-effort)
-                    FINNHUB_API_KEY = 'd3pn8o1r01qmuiu9pon0d3pn8o1r01qmuiu9pong'
                     if FINNHUB_API_KEY and finnhub is not None and detect_ticker(game_name):
+
                         try:
                             client = finnhub.Client(api_key= FINNHUB_API_KEY)
                             comp = client.general_news('general', min_id=0)
@@ -601,3 +611,4 @@ st.markdown('</div></div>', unsafe_allow_html=True)
 
 st.markdown("Notes: Provide API keys where required in the code or upload a model. The app will still attempt prediction using available signals.")
 st.markdown("Notes: This tester assumes the model expects features in the order [mentions, avg_sentiment, yt_views, reddit_comments]. If your model was trained with different preprocessing, ensure the uploaded CSV or manual inputs match the training pipeline.")
+
