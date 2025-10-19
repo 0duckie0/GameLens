@@ -30,49 +30,234 @@ try:
 except Exception:
     finnhub = None
 
-st.set_page_config(page_title="GameLens — Auto Buzz Collector & Stock Predictor", layout="centered")
-st.title("GameLens — Give a game name, I'll collect buzz and predict stock direction")
+st.set_page_config(page_title="GameLens — AI Buzz & Stock Predictor", layout="wide", page_icon="🎮")
+
+# New high-tech gamer CSS + animated background + font
+st.markdown(
+    """
+    <style>
+    /* Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+    /* Full animated gradient + subtle grid */
+    :root{
+      --bg1: #020617;
+      --bg2: #071028;
+      --accent1: #7b24ff;
+      --accent2: #00ffc2;
+      --accent3: #00a3ff;
+      --muted: #9fb3c8;
+      --card: rgba(6,10,16,0.6);
+    }
+    html, body, [class*="css"] {
+        height:100%;
+        background: radial-gradient(1200px 400px at 10% 10%, rgba(123,36,255,0.06), transparent 10%),
+                    radial-gradient(800px 300px at 90% 90%, rgba(0,255,194,0.03), transparent 10%),
+                    linear-gradient(120deg, var(--bg1) 0%, var(--bg2) 100%);
+        color: #e6f0ff;
+        font-family: 'Share Tech Mono', monospace;
+        overflow: auto;
+    }
+
+    /* subtle animated noise / scanlines */
+    .gamelens-wrap {
+      min-height: 100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:48px 28px;
+    }
+    .gamelens-vc {
+      width: 1200px;
+      max-width: calc(100% - 48px);
+      margin: auto;
+      display:block;
+    }
+
+    /* header */
+    .gl-header {
+      font-family: 'Orbitron', sans-serif;
+      text-align:center;
+      margin-bottom:16px;
+    }
+    .gl-title {
+      font-size:48px;
+      font-weight:700;
+      margin:0;
+      letter-spacing:1px;
+      background: linear-gradient(90deg, #7b24ff, #00ffc2, #00a3ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 6px 18px rgba(0,0,0,0.6));
+      animation: hue 6s linear infinite;
+    }
+    @keyframes hue { 0%{filter: hue-rotate(0deg)} 50%{filter: hue-rotate(30deg)} 100%{filter: hue-rotate(0deg)} }
+
+    .gl-sub {
+      color: var(--accent2);
+      opacity:0.95;
+      margin-top:6px;
+      font-size:14px;
+    }
+
+    /* neon card */
+    .neon-card {
+      background: var(--card);
+      border-radius:12px;
+      padding:16px;
+      border: 1px solid rgba(123,36,255,0.08);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 20px rgba(123,36,255,0.02) inset;
+      margin-bottom:16px;
+    }
+    .neon-grid {
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:18px;
+      align-items:start;
+    }
+
+    /* input label style before actual Streamlit inputs */
+    .input-label {
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--muted);
+      font-size:13px;
+      margin-bottom:6px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .input-label .icon { font-size:18px; }
+
+    /* buttons */
+    .stButton>button {
+      background: linear-gradient(90deg,var(--accent1), var(--accent2)) !important;
+      color: #021014 !important;
+      font-weight:700;
+      border-radius:10px;
+      padding:10px 20px;
+      border: none;
+      box-shadow: 0 14px 30px rgba(123,36,255,0.12);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+    .stButton>button:hover{
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px rgba(123,36,255,0.18), 0 0 30px rgba(0,255,194,0.06);
+    }
+
+    /* result / prediction */
+    .result-panel {
+      border-radius:10px;
+      padding:14px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      border: 1px solid rgba(0,255,194,0.06);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+    .prediction {
+      text-align:center;
+      font-family: 'Orbitron', sans-serif;
+      font-size:48px;
+      margin:8px 0;
+      letter-spacing:2px;
+    }
+    .pred-up {
+      color:#00ff8c;
+      text-shadow: 0 0 16px rgba(0,255,140,0.28), 0 0 6px rgba(0,160,120,0.2);
+      animation: glowUp 2s ease-in-out infinite;
+    }
+    .pred-down {
+      color:#ff4d6d;
+      text-shadow: 0 0 16px rgba(255,77,109,0.28), 0 0 6px rgba(160,30,60,0.2);
+      animation: glowDown 2s ease-in-out infinite;
+    }
+    @keyframes glowUp { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.18) saturate(1.05)} }
+    @keyframes glowDown { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.18) saturate(1.05)} }
+
+    /* footer */
+    .gl-footer {
+      text-align:center;
+      color: #8fb9c9;
+      font-size:13px;
+      margin-top:20px;
+      opacity:0.9;
+    }
+
+    /* responsive tweaks */
+    @media (max-width:1100px) {
+      .neon-grid { grid-template-columns: 1fr; }
+      .gl-title { font-size:38px; }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# layout wrapper start
+st.markdown('<div class="gamelens-wrap"><div class="gamelens-vc">', unsafe_allow_html=True)
+
+# Header with styled title & subtitle
+st.markdown(
+    """
+    <div class="gl-header">
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
+        <div style="width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,#7b24ff,#00ffc2);display:flex;align-items:center;justify-content:center;box-shadow: 0 10px 30px rgba(0,0,0,0.6);">
+          <span style="font-size:34px;">🎮</span>
+        </div>
+      </div>
+      <h1 class="gl-title">🎮 GameLens: AI Buzz & Stock Predictor</h1>
+      <div class="gl-sub">Collect buzz across YouTube / Reddit / News / Trends — preprocess and predict company stock direction</div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 # ensure VADER lexicon
 nltk.download("vader_lexicon", quiet=True)
 sid = SentimentIntensityAnalyzer()
 
-# Sidebar: API keys + model upload
-st.sidebar.header("API keys & model")
-YOUTUBE_API_KEY = st.sidebar.text_input("YouTube Data API key", type="password")
-REDDIT_CLIENT_ID = st.sidebar.text_input("Reddit client_id", type="password")
-REDDIT_CLIENT_SECRET = st.sidebar.text_input("Reddit client_secret", type="password")
-REDDIT_USER_AGENT = st.sidebar.text_input("Reddit user_agent", value="GameLensBot/0.1")
+# Model uploader & info (kept same logic, presented in neon card)
+st.markdown('<div class="neon-grid">', unsafe_allow_html=True)
 
-FINNHUB_API_KEY = 'd3pn8o1r01qmuiu9pon0d3pn8o1r01qmuiu9pong'
-
-model_file = st.sidebar.file_uploader("Upload trained model (.pkl/.joblib) or leave empty to use ./stock_direction_model.pkl", type=["pkl","joblib"])
+st.markdown('<div class="neon-card">', unsafe_allow_html=True)
+st.markdown('<div class="input-label"><span class="icon">🧠</span><strong>Model</strong></div>', unsafe_allow_html=True)
+model_file = st.file_uploader("", type=["pkl","joblib"], key="model_file_uploader")
 model = None
 if model_file is not None:
     try:
         model = joblib.load(model_file)
-        st.sidebar.success("Model loaded from upload.")
+        st.success("Model loaded from upload.")
     except Exception as e:
-        st.sidebar.error(f"Failed to load uploaded model: {e}")
+        st.error(f"Failed to load uploaded model: {e}")
 else:
     try:
         model = joblib.load("stock_direction_model.pkl")
-        st.sidebar.success("Loaded model from ./stock_direction_model.pkl")
+        st.success("Loaded model from ./stock_direction_model.pkl")
     except Exception:
-        st.sidebar.info("No model loaded. Upload a model in sidebar or place stock_direction_model.pkl in the app folder.")
+        st.info("No model loaded. Upload a model or place stock_direction_model.pkl in the app folder.")
+st.markdown('<div style="margin-top:8px;color:#9fb3c8;font-size:12px">Model expects features: mentions, avg_sentiment, yt_views, reddit_comments</div>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
-st.sidebar.markdown("---")
-st.sidebar.write("Model expects features (case-sensitive): mentions, avg_sentiment, yt_views, reddit_comments")
+# Inputs card (aligned beside model uploader)
+st.markdown('<div class="neon-card">', unsafe_allow_html=True)
+st.markdown('<div class="input-label"><span class="icon">🎮</span><strong>Game Name</strong></div>', unsafe_allow_html=True)
+game_name = st.text_input("", value="", key="game_name").strip()
+cols = st.columns([1,1,1])
+with cols[0]:
+    st.markdown('<div class="input-label"><span class="icon">⏳</span><strong>Days Back</strong></div>', unsafe_allow_html=True)
+    days_back = st.number_input("", min_value=1, max_value=30, value=3, step=1, key="days_back")
+with cols[1]:
+    st.markdown('<div class="input-label"><span class="icon">💹</span><strong>Stock Ticker (optional)</strong></div>', unsafe_allow_html=True)
+    override_ticker = st.text_input("", value="", key="override_ticker")
+with cols[2]:
+    st.markdown('<div style="height:46px;"></div>', unsafe_allow_html=True)
+    st.markdown("")  # placeholder for alignment
+st.markdown('</div>', unsafe_allow_html=True)
 
-# User inputs
-st.subheader("Inputs")
-game_name = st.text_input("Game name (example: 'Cyberpunk 2077')").strip()
-days_back = st.number_input("Days to collect (past N days)", min_value=1, max_value=30, value=3, step=1)
-override_ticker = st.text_input("Optional: override company ticker (leave empty to auto-detect)")
+st.markdown('</div>', unsafe_allow_html=True)  # close neon-grid
 
 # minimal mapping (expandable)
 GAME_TO_TICKER = {
-     # ----- Take-Two Interactive -----
+    # ----- Take-Two Interactive -----
     "gta": "TTWO",
     "grand theft auto": "TTWO",
     "red dead": "TTWO",
@@ -358,7 +543,7 @@ def aggregate_features(game, days, yt_videos, reddit_posts, news_df, trends_df):
         })
     return pd.DataFrame(rows)
 
-# Main run
+# Main run (button on main page)
 if st.button("Collect buzz & predict"):
     if not game_name:
         st.error("Enter a game name.")
@@ -371,6 +556,7 @@ if st.button("Collect buzz & predict"):
             trends_df = get_google_trends(game_name, days_back)
             feature_df = aggregate_features(game_name, days_back, yt_videos, reddit_posts, news_df, trends_df)
             st.success("Collection finished.")
+        st.markdown('<div class="neon-card result-panel">', unsafe_allow_html=True)
         st.subheader("Collected daily features")
         st.dataframe(feature_df)
         # prepare input for model: use last available row
@@ -379,7 +565,7 @@ if st.button("Collect buzz & predict"):
         else:
             X = feature_df[["mentions","avg_sentiment","yt_views","reddit_comments"]].fillna(0)
             last = X.iloc[-1:].astype(float)
-            st.write("Features used for prediction (most recent):")
+            st.markdown('<div style="margin-top:10px;"><div class="input-label"><span class="icon">🔎</span><strong>Features used (most recent)</strong></div></div>', unsafe_allow_html=True)
             st.write(last.T)
             if model is None:
                 st.error("No model available. Upload or place stock_direction_model.pkl in folder.")
@@ -389,10 +575,15 @@ if st.button("Collect buzz & predict"):
                     classes = model.classes_
                     pred = int(model.predict(last.values)[0])
                     prob_map = {str(c): float(p) for c, p in zip(classes, probs)}
-                    st.success(f"Predicted direction: {'UP 📈' if pred == 1 else 'DOWN/FLAT 📉'} (class {pred})")
-                    st.write("Class probabilities:", prob_map)
-                    st.write("Detected/used ticker:", detect_ticker(game_name) or "None / user override?")
+                    # big glowing prediction
+                    if pred == 1:
+                        st.markdown(f'<div class="prediction pred-up">UP 📈</div>', unsafe_allow_html=True)
+                    else:
+                        st.markdown(f'<div class="prediction pred-down">DOWN/FLAT 📉</div>', unsafe_allow_html=True)
+                    st.markdown(f'<div style="text-align:center;color:var(--muted);margin-bottom:8px">Class probabilities: {prob_map}</div>', unsafe_allow_html=True)
+                    st.markdown(f'<div style="text-align:center;color:var(--muted);margin-bottom:8px">Detected/used ticker: {detect_ticker(game_name) or "None / user override?"}</div>', unsafe_allow_html=True)
                     # optional: if finnhub key provided, show recent company sentiment (best-effort)
+                    FINNHUB_API_KEY = 'd3pn8o1r01qmuiu9pon0d3pn8o1r01qmuiu9pong'
                     if FINNHUB_API_KEY and finnhub is not None and detect_ticker(game_name):
                         try:
                             client = finnhub.Client(api_key= FINNHUB_API_KEY)
@@ -402,8 +593,11 @@ if st.button("Collect buzz & predict"):
                             pass
                 except Exception as e:
                     st.error(f"Prediction failed: {e}")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown("---")
-st.write("Notes: Provide API keys in the sidebar. If some APIs are missing the app will still attempt prediction using available signals. Ensure the uploaded model expects features: mentions, avg_sentiment, yt_views, reddit_comments.")
-# ...existing code...
+# footer + closing wrapper
+st.markdown('<div class="gl-footer">© 2025 GameLens — Built for gamers, powered by AI ⚡</div>', unsafe_allow_html=True)
+st.markdown('</div></div>', unsafe_allow_html=True)
+
+st.markdown("Notes: Provide API keys where required in the code or upload a model. The app will still attempt prediction using available signals.")
 st.markdown("Notes: This tester assumes the model expects features in the order [mentions, avg_sentiment, yt_views, reddit_comments]. If your model was trained with different preprocessing, ensure the uploaded CSV or manual inputs match the training pipeline.")
