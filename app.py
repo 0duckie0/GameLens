@@ -560,8 +560,7 @@ if st.button("Collect buzz & predict"):
         with st.spinner("Collecting data from APIs... this can take a few seconds"):
             ticker = detect_ticker(game_name)
             yt_videos = youtube_videos_and_stats(YOUTUBE_API_KEY, game_name, days_back)
-reddit_posts = fetch_reddit(game_name, days_back, REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, REDDIT_USER_AGENT)
-
+            reddit_posts = fetch_reddit(game_name, days_back, REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, REDDIT_USER_AGENT)
             news_df = news_sentiments(game_name, days_back)
             trends_df = get_google_trends(game_name, days_back)
             feature_df = aggregate_features(game_name, days_back, yt_videos, reddit_posts, news_df, trends_df)
@@ -611,4 +610,5 @@ st.markdown('</div></div>', unsafe_allow_html=True)
 
 st.markdown("Notes: Provide API keys where required in the code or upload a model. The app will still attempt prediction using available signals.")
 st.markdown("Notes: This tester assumes the model expects features in the order [mentions, avg_sentiment, yt_views, reddit_comments]. If your model was trained with different preprocessing, ensure the uploaded CSV or manual inputs match the training pipeline.")
+
 
