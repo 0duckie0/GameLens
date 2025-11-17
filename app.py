@@ -580,6 +580,10 @@ if st.button("Collect buzz & predict"):
             st.info("Try a more popular game or reduce the number of days.")
             st.stop()
      # -----------------------------------------------------
+        last["mentions"] = last["mentions"].replace(0, 1)
+        last["avg_sentiment"] = last["avg_sentiment"].replace(0, 0.0)
+        last["yt_views"] = last["yt_views"].replace(0, 10)
+        last["reddit_comments"] = last["reddit_comments"].replace(0, 1)    
             st.markdown('<div style="margin-top:10px;"><div class="input-label"><span class="icon">🔎</span><strong>Features used (most recent)</strong></div></div>', unsafe_allow_html=True)
             st.write(last.T)
         if model is None:
@@ -616,6 +620,7 @@ st.markdown('</div></div>', unsafe_allow_html=True)
 
 st.markdown("Notes: Provide API keys where required in the code or upload a model. The app will still attempt prediction using available signals.")
 st.markdown("Notes: This tester assumes the model expects features in the order [mentions, avg_sentiment, yt_views, reddit_comments]. If your model was trained with different preprocessing, ensure the uploaded CSV or manual inputs match the training pipeline.")
+
 
 
 
