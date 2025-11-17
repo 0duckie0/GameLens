@@ -576,15 +576,15 @@ if st.button("Collect buzz & predict"):
             last = X.iloc[-1:].astype(float)
             # ---- FIX: stop predicting if features are empty ----
         if last.sum().sum() == 0:
-         st.error("⚠ No buzz data found for this game — prediction skipped.")
-         st.info("Try a more popular game or reduce the number of days.")
-         st.stop()
+            st.error("⚠ No buzz data found for this game — prediction skipped.")
+            st.info("Try a more popular game or reduce the number of days.")
+            st.stop()
      # -----------------------------------------------------
-        st.markdown('<div style="margin-top:10px;"><div class="input-label"><span class="icon">🔎</span><strong>Features used (most recent)</strong></div></div>', unsafe_allow_html=True)
-        st.write(last.T)
-            if model is None:
-                st.error("No model available. Upload or place stock_direction_model.pkl in folder.")
-            else:
+            st.markdown('<div style="margin-top:10px;"><div class="input-label"><span class="icon">🔎</span><strong>Features used (most recent)</strong></div></div>', unsafe_allow_html=True)
+            st.write(last.T)
+        if model is None:
+            st.error("No model available. Upload or place stock_direction_model.pkl in folder.")
+        else:
                 try:
                     probs = model.predict_proba(last.values)[0]
                     classes = model.classes_
@@ -616,6 +616,7 @@ st.markdown('</div></div>', unsafe_allow_html=True)
 
 st.markdown("Notes: Provide API keys where required in the code or upload a model. The app will still attempt prediction using available signals.")
 st.markdown("Notes: This tester assumes the model expects features in the order [mentions, avg_sentiment, yt_views, reddit_comments]. If your model was trained with different preprocessing, ensure the uploaded CSV or manual inputs match the training pipeline.")
+
 
 
 
